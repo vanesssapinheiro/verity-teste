@@ -1,0 +1,60 @@
+permissions:
+  contents: write
+
+name: Pipeline de release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verificar código
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Gerar relatórios
+        run: npm run newman:reports
+
+      - name: Upload relatórios como artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: reports
+          path: |
+            reports/report.json
+            reports/report.html
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Recupera arquivos
+        uses: actions/download-artifact@v3
+        with:
+          name: reports
+
+      - name: Obter versão
+        id: get_version
+        run: echo "VERSION=$(date +%Y%m%d_%H%M%S)" >> $GITHUB_ENV
+
+      - name: Criar Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          body: "Release gerada automaticamente com relatórios."
+          draft: false
+          artifacts: report.json,report.html

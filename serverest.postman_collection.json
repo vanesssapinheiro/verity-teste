@@ -1,0 +1,1644 @@
+{
+	"info": {
+		"_postman_id": "93dd8af9-2967-44c5-a917-da01a3d0abea",
+		"name": "serverest",
+		"description": "**O ServeRest é uma API REST gratuita que simula uma loja virtual com intuito de servir de material de estudos de testes de API.**\n\n**Não deixe de seguir o [autor do projeto](https://github.com/PauloGoncalvesBH) e deixar um star no repositório: [github.com/ServeRest/ServeRest](https://github.com/ServeRest/ServeRest)**\n\nEssa página documenta todas as rotas e como acessá-las. Para mais detalhes do ServeRest (como executar localmente utilizando Docker ou NPM, alterar timeout de autenticação, etc) acesse [o repositório do ServeRest](https://github.com/serverest/serverest).\n\nEstá utilizando Postman? Importe o [JSON do Swagger](https://raw.githubusercontent.com/ServeRest/ServeRest/trunk/docs/swagger.json) para ter acesso às collections.\n\nVai fazer teste de carga? Leia a seção '[Teste de Carga](https://github.com/ServeRest/ServeRest#teste-de-carga)'.\n\n\nMuito obrigado ♥ a todos que apoiam o projeto [financeiramente](https://opencollective.com/serverest#section-contributors) ou [com código, ideias e divulgação](https://github.com/ServeRest/ServeRest#contribuidores-), graças a vocês **mais de R$ 2000,00 foram doados para a ONG [Todas as letras](https://todasasletras.org/)** até o momento.\n\nO ServeRest possui um front, com status em beta, não deixe de conhecer: [front.serverest.dev](https://front.serverest.dev).\n\nPrecisa de apoio? [Abra uma issue](https://github.com/ServeRest/ServeRest/issues) ou contate o mantenedor do projeto:\n\n\nContact Support:\n Name: Paulo Gonçalves",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28883546"
+	},
+	"item": [
+		{
+			"name": "login",
+			"item": [
+				{
+					"name": "cadastrar usuario",
+					"item": [
+						{
+							"name": "Cadastrar usuário",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"currentName\", `user_${Date.now()}`);",
+											"pm.environment.set(\"currentEmail\", `user_${Date.now()}@example.com`);",
+											"pm.environment.set(\"currentPassword\", `teste`);",
+											"pm.environment.set(\"currentAdministrador\", Math.random() > 0.5 ? \"true\" : \"false\");"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Status code é 201\", () => {",
+											"    pm.expect(pm.response.code).to.eql(201);",
+											"  });",
+											"",
+											"  pm.test(\"Mensagem é correta\", () => {",
+											"    pm.expect(response.message).to.eql(\"Cadastro realizado com sucesso\");",
+											"  });",
+											"",
+											"  pm.test(\"_id presente\", () => {",
+											"    pm.expect(response).to.have.property(\"_id\");",
+											"  });",
+											"",
+											"pm.environment.set(\"currentUserId\", response._id);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nome\": \"{{currentName}}\",\n  \"email\": \"{{currentEmail}}\",\n  \"password\": \"{{currentPassword}}\",\n  \"administrador\": \"{{currentAdministrador}}\"\n}\n",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/usuarios",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"usuarios"
+									]
+								},
+								"description": "Não é permitido cadastrar usuário com email já utilizado"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Login realizado com sucesso",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"pm.test(\"Status code é 200\", () => {",
+									"    pm.expect(pm.response.code).to.eql(200);",
+									"  });",
+									"",
+									"  pm.test(\"Mensagem é correta\", () => {",
+									"    pm.expect(response.message).to.eql(\"Login realizado com sucesso\");",
+									"  });",
+									"",
+									"  pm.test(\"Token de autorização está presente\", () => {",
+									"    pm.expect(response).to.have.property(\"authorization\");",
+									"    pm.expect(response.authorization).to.match(/^Bearer\\s[\\w-]+\\.[\\w-]+\\.[\\w-]+$/);",
+									"  });",
+									"",
+									"  pm.environment.set(\"currentBearerToken\", response.authorization.split(\" \")[1]); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{currentEmail}}\",\n  \"password\": \"{{currentPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "A duração do token retornado em authorization é de 600 segundos (10 minutos). Caso esteja expirado irá receber status code 401 (Unauthorized).\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Email e/ou senha invalido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"pm.test(\"Status code é 401\", () => {",
+									"    pm.expect(pm.response.code).to.eql(401);",
+									"  });",
+									"",
+									"  pm.test(\"Mensagem de erro está correta\", () => {",
+									"    pm.expect(response.message).to.eql(\"Email e/ou senha inválidos\");",
+									"  });"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{$randomEmail}}\",\n  \"password\": \"{{$randomPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "A duração do token retornado em authorization é de 600 segundos (10 minutos). Caso esteja expirado irá receber status code 401 (Unauthorized).\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Faltando email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"  pm.test(\"Status code é 400\", () => {",
+									"    pm.expect(pm.response.code).to.eql(400);",
+									"  });",
+									"  pm.test(\"Status code é 400 para falta de email\", () => {",
+									"      pm.expect(pm.response.code).to.eql(400);",
+									"    });",
+									"",
+									"    pm.test(\"Menssagem de erro por falta de email correta\", () => {",
+									"      pm.expect(response.email).to.eql(\"email é obrigatório\");",
+									"    });",
+									"  ",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"password\": \"{{defaultPassword01}}\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "A duração do token retornado em authorization é de 600 segundos (10 minutos). Caso esteja expirado irá receber status code 401 (Unauthorized).\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Faltando passwod",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"  pm.test(\"Status code é 400\", () => {",
+									"    pm.expect(pm.response.code).to.eql(400);",
+									"  });",
+									"  pm.test(\"Status code é 400 para falta de password\", () => {",
+									"      pm.expect(pm.response.code).to.eql(400);",
+									"    });",
+									"",
+									"    pm.test(\"Menssagem de erro por falta de password correta\", () => {",
+									"      pm.expect(response.password).to.eql(\"password é obrigatório\");",
+									"    });",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{$randomEmail}}\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "A duração do token retornado em authorization é de 600 segundos (10 minutos). Caso esteja expirado irá receber status code 401 (Unauthorized).\n"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "usuarios",
+			"item": [
+				{
+					"name": "listar usuarios",
+					"item": [
+						{
+							"name": "Listar usuários cadastrados sem filtro",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Status code é 200\", () => {",
+											"    pm.expect(pm.response.code).to.eql(200);",
+											"  });",
+											"",
+											"pm.test(\"quantidade é um número\", () => {    ",
+											"    pm.expect(response).to.have.property(\"quantidade\").that.is.a(\"number\");",
+											"});",
+											"",
+											"pm.test(\"usuarios é um array\", () => {",
+											"    pm.expect(response).to.have.property(\"usuarios\").that.is.an(\"array\");",
+											"});",
+											"",
+											"pm.test(\"usuarios contém itens válidos\", () => {",
+											"    const usuarios = response.usuarios;",
+											"",
+											"    if (usuarios.length > 0) {",
+											"        const usuario = usuarios[0];",
+											"        pm.expect(usuario).to.have.property(\"nome\").that.is.a(\"string\");",
+											"        pm.expect(usuario).to.have.property(\"email\").that.is.a(\"string\").and.match(/^\\S+@\\S+\\.\\S+$/);",
+											"        pm.expect(usuario).to.have.property(\"password\").that.is.a(\"string\");",
+											"        pm.expect(usuario).to.have.property(\"administrador\").that.is.a(\"string\");",
+											"        pm.expect(usuario).to.have.property(\"_id\").that.is.a(\"string\");",
+											"    }",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{currentBearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/usuarios",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"usuarios"
+									],
+									"query": [
+										{
+											"key": "_id",
+											"value": "<string>",
+											"disabled": true
+										},
+										{
+											"key": "nome",
+											"value": "<string>",
+											"disabled": true
+										},
+										{
+											"key": "email",
+											"value": "<string>",
+											"disabled": true
+										},
+										{
+											"key": "password",
+											"value": "<string>",
+											"disabled": true
+										},
+										{
+											"key": "administrador",
+											"value": "<string>",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar usuários cadastrados com filtro",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Status code é 200\", () => {",
+											"    pm.expect(pm.response.code).to.eql(200);",
+											"  });",
+											"",
+											"pm.test(\"quantidade é um número\", () => {    ",
+											"    pm.expect(response).to.have.property(\"quantidade\").that.is.a(\"number\");",
+											"});",
+											"",
+											"pm.test(\"usuarios é um array\", () => {",
+											"    pm.expect(response).to.have.property(\"usuarios\").that.is.an(\"array\");",
+											"});",
+											"",
+											"pm.test(\"usuarios contém um item\", () => {",
+											"    const usuarios = response.usuarios;",
+											"    const usuario = usuarios.at(0);",
+											"    ",
+											"    pm.expect(usuario).to.have.property(\"nome\").that.is.a(\"string\");",
+											"    pm.expect(usuario).to.have.property(\"email\").that.is.a(\"string\").and.match(/^\\S+@\\S+\\.\\S+$/);",
+											"    pm.expect(usuario).to.have.property(\"password\").that.is.a(\"string\");",
+											"    pm.expect(usuario).to.have.property(\"administrador\").that.is.a(\"string\");",
+											"    pm.expect(usuario).to.have.property(\"_id\").that.is.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"Query params são iguais ao primeiro usuário na resposta\", () => {",
+											"    const queryParams = {",
+											"        _id: pm.request.url.query.get(\"_id\"),",
+											"        nome: pm.request.url.query.get(\"nome\"),",
+											"        email: pm.request.url.query.get(\"email\"),",
+											"        password: pm.request.url.query.get(\"password\"),",
+											"        administrador: pm.request.url.query.get(\"administrador\"),",
+											"    };",
+											"",
+											"    const firstUser = response.usuarios[0];",
+											"",
+											"    pm.expect(queryParams._id).to.be.eql(firstUser._id);",
+											"    pm.expect(queryParams.nome).to.be.eql(firstUser.nome);",
+											"    pm.expect(queryParams.email).to.be.eql(firstUser.email);",
+											"    pm.expect(queryParams.password).to.be.eql(firstUser.password);",
+											"    pm.expect(queryParams.administrador).to.be.eql(firstUser.administrador);",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{currentBearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/usuarios?_id={{currentUserId}}&nome={{currentName}}&email={{currentEmail}}&password={{currentPassword}}&administrador={{currentAdministrador}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"usuarios"
+									],
+									"query": [
+										{
+											"key": "_id",
+											"value": "{{currentUserId}}"
+										},
+										{
+											"key": "nome",
+											"value": "{{currentName}}"
+										},
+										{
+											"key": "email",
+											"value": "{{currentEmail}}"
+										},
+										{
+											"key": "password",
+											"value": "{{currentPassword}}"
+										},
+										{
+											"key": "administrador",
+											"value": "{{currentAdministrador}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Filtros invalidos",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Status code é 400\", () => {",
+											"    pm.expect(pm.response.code).to.eql(400);",
+											"  });",
+											"",
+											"pm.test(\"Email invalido\", () => {    ",
+											"    pm.expect(response).to.have.property(\"email\").that.is.eql(\"email deve ser um email válido\");",
+											"});",
+											"",
+											"pm.test(\"Administrador invalido\", () => {    ",
+											"    pm.expect(response).to.have.property(\"administrador\").that.is.eql(\"administrador deve ser 'true' ou 'false'\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{currentBearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/usuarios?_id={{currentUserId}}&nome={{currentName}}&email=invalid&password={{currentPassword}}&administrador=invalid",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"usuarios"
+									],
+									"query": [
+										{
+											"key": "_id",
+											"value": "{{currentUserId}}"
+										},
+										{
+											"key": "nome",
+											"value": "{{currentName}}"
+										},
+										{
+											"key": "email",
+											"value": "invalid"
+										},
+										{
+											"key": "password",
+											"value": "{{currentPassword}}"
+										},
+										{
+											"key": "administrador",
+											"value": "invalid"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Usuarios não encontrados",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Status code é 200\", () => {",
+											"    pm.expect(pm.response.code).to.eql(200);",
+											"  });",
+											"",
+											"pm.test(\"quantidade é igual 0\", () => {    ",
+											"    pm.expect(response).to.have.property(\"quantidade\").to.be.eql(0)",
+											"});",
+											"",
+											"pm.test(\"usuarios é um array vazio\", () => {",
+											"    pm.expect(response).to.have.property(\"usuarios\").that.is.an(\"array\");",
+											"",
+											"    pm.expect(response.usuarios).to.have.lengthOf(0);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{currentBearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/usuarios?_id=invalid&nome={{currentName}}&email={{currentEmail}}&password={{currentPassword}}&administrador={{currentAdministrador}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"usuarios"
+									],
+									"query": [
+										{
+											"key": "_id",
+											"value": "invalid"
+										},
+										{
+											"key": "nome",
+											"value": "{{currentName}}"
+										},
+										{
+											"key": "email",
+											"value": "{{currentEmail}}"
+										},
+										{
+											"key": "password",
+											"value": "{{currentPassword}}"
+										},
+										{
+											"key": "administrador",
+											"value": "{{currentAdministrador}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "cadastro",
+					"item": [
+						{
+							"name": "Cadastrar usuário com sucesso",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Status code é 201\", () => {",
+											"    pm.expect(pm.response.code).to.eql(201);",
+											"  });",
+											"",
+											"  pm.test(\"Mensagem é correta\", () => {",
+											"    pm.expect(response.message).to.eql(\"Cadastro realizado com sucesso\");",
+											"  });",
+											"",
+											"  pm.test(\"_id presente\", () => {",
+											"    pm.expect(response).to.have.property(\"_id\");",
+											"  });",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nome\": \"{{$randomFullName}}\",\n  \"email\": \"{{$timestamp}}_{{$randomEmail}}\",\n  \"password\": \"{{$randomPassword}}\",\n  \"administrador\": \"{{$randomBoolean}}\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/usuarios",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"usuarios"
+									]
+								},
+								"description": "Não é permitido cadastrar usuário com email já utilizado"
+							},
+							"response": []
+						},
+						{
+							"name": "Email já existe",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"if(pm.response.code === 400){",
+											"    pm.test(\"Status code é 400\", () => {",
+											"    pm.expect(pm.response.code).to.eql(400);",
+											"  });",
+											"",
+											"  pm.test(\"Mensagem é correta\", () => {",
+											"    pm.expect(response.message).to.eql(\"Este email já está sendo usado\");",
+											"  });",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nome\": \"{{currentName}}\",\n  \"email\": \"{{currentEmail}}\",\n  \"password\": \"{{currentPassword}}\",\n  \"administrador\": \"{{currentAdministrador}}\"\n}\n",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/usuarios",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"usuarios"
+									]
+								},
+								"description": "Não é permitido cadastrar usuário com email já utilizado"
+							},
+							"response": []
+						},
+						{
+							"name": "Faltando propriedades obrigatorias",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Status code é 400\", () => {",
+											"    pm.expect(pm.response.code).to.eql(400);",
+											"  });",
+											"",
+											"pm.test(\"nome é obrigatório\", () => {    ",
+											"    pm.expect(response).to.have.property(\"nome\", \"nome é obrigatório\");",
+											"});",
+											"",
+											"pm.test(\"email é obrigatório\", () => {",
+											"    pm.expect(response).to.have.property(\"email\", \"email é obrigatório\");",
+											"});",
+											"",
+											"pm.test(\"password é obrigatório\", () => {",
+											"    pm.expect(response).to.have.property(\"password\", \"password é obrigatório\");",
+											"});",
+											"",
+											"pm.test(\"administrador é obrigatório\", () => {",
+											"    pm.expect(response).to.have.property(\"administrador\", \"administrador é obrigatório\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/usuarios",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"usuarios"
+									]
+								},
+								"description": "Não é permitido cadastrar usuário com email já utilizado"
+							},
+							"response": []
+						},
+						{
+							"name": "Propridade email invalido",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Status code é 400\", () => {",
+											"    pm.expect(pm.response.code).to.eql(400);",
+											"  });",
+											"",
+											"pm.test(\"email invalido\", () => {    ",
+											"    pm.expect(response).to.have.property(\"email\", \"email deve ser um email válido\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nome\": \"{{$randomFullName}}\",\n  \"email\": \"invalid\",\n  \"password\": \"{{$randomPassword}}}}\",\n  \"administrador\": \"{{$randomBoolean}}\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/usuarios",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"usuarios"
+									]
+								},
+								"description": "Não é permitido cadastrar usuário com email já utilizado"
+							},
+							"response": []
+						},
+						{
+							"name": "Propridade administrador invalida",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Status code é 400\", () => {",
+											"    pm.expect(pm.response.code).to.eql(400);",
+											"  });",
+											"",
+											"pm.test(\"adminstrador invalido\", () => {    ",
+											"    pm.expect(response).to.have.property(\"administrador\", \"administrador deve ser 'true' ou 'false'\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nome\": \"{{$randomFullName}}\",\n  \"email\": \"{{$randomEmail}}\",\n  \"password\": \"{{$randomPassword}}}}\",\n  \"administrador\": \"invalid\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/usuarios",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"usuarios"
+									]
+								},
+								"description": "Não é permitido cadastrar usuário com email já utilizado"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "{_id}",
+					"item": [
+						{
+							"name": "buscar por id",
+							"item": [
+								{
+									"name": "Buscar usuário por ID",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const response = pm.response.json();",
+													"",
+													"pm.test(\"Status code é 200\", () => {",
+													"    pm.expect(pm.response.code).to.eql(200);",
+													"});",
+													"",
+													"pm.test(\"propriedades validas\", () => {",
+													"    const usuario = response;",
+													"",
+													"    pm.expect(usuario).to.have.property(\"nome\").that.is.a(\"string\");",
+													"    pm.expect(usuario).to.have.property(\"email\").that.is.a(\"string\").and.match(/^\\S+@\\S+\\.\\S+$/);",
+													"    pm.expect(usuario).to.have.property(\"password\").that.is.a(\"string\");",
+													"    pm.expect(usuario).to.have.property(\"administrador\").that.is.a(\"string\");",
+													"    pm.expect(usuario).to.have.property(\"_id\").that.is.a(\"string\");",
+													"});",
+													"",
+													"pm.test(\"_id da url deve ser igual _id da resposta\", () => {",
+													"    const urlId = pm.request.url.toString().split(\"/\").at(-1);",
+													"    pm.expect(response._id).to.eql(urlId);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{currentBearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/usuarios/:_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"usuarios",
+												":_id"
+											],
+											"variable": [
+												{
+													"key": "_id",
+													"value": "{{currentUserId}}",
+													"description": "(Required) ID do usuário"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Usuario não encontrado",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const response = pm.response.json();",
+													"",
+													"pm.test(\"Status code é 200\", () => {",
+													"    pm.expect(pm.response.code).to.eql(400);",
+													"});",
+													"",
+													"pm.test(\"Mensagem usuário não encontrado\", () => {",
+													"    pm.expect(response).property(\"message\", \"Usuário não encontrado\")",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{currentBearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/usuarios/:_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"usuarios",
+												":_id"
+											],
+											"variable": [
+												{
+													"key": "_id",
+													"value": "invalid"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Editar por id",
+							"item": [
+								{
+									"name": "Editar usuário com sucesso",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.environment.set(\"currentName\", `user_${Date.now()}`);",
+													"pm.environment.set(\"currentEmail\", `user_${Date.now()}@example.com`);",
+													"pm.environment.set(\"currentPassword\", `teste`);",
+													"pm.environment.set(\"currentAdministrador\", Math.random() > 0.5 ? \"true\" : \"false\");"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const response = pm.response.json();",
+													"",
+													"pm.test(\"Status code é 200\", () => {",
+													"    pm.expect(pm.response.code).to.eql(200);",
+													"  });",
+													"",
+													"  pm.test(\"Mensagem é correta\", () => {",
+													"    pm.expect(response.message).to.eql(\"Registro alterado com sucesso\");",
+													"  });"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{currentBearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"nome\": \"{{currentName}}\",\n  \"email\": \"{{currentEmail}}\",\n  \"password\": \"{{currentPassword}}\",\n  \"administrador\": \"{{currentAdministrador}}\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/usuarios/:_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"usuarios",
+												":_id"
+											],
+											"variable": [
+												{
+													"key": "_id",
+													"value": "{{currentUserId}}",
+													"description": "(Required) ID do usuário"
+												}
+											]
+										},
+										"description": "Não é permitido cadastrar usuário com email já utilizado.\nCaso não seja encontrado usuário com o ID informado é realizado novo cadastro ao invés de alteração.\n"
+									},
+									"response": []
+								},
+								{
+									"name": "Parametros invalidos",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const response = pm.response.json();",
+													"",
+													"pm.test(\"Status code é 400\", () => {",
+													"    pm.expect(pm.response.code).to.eql(400);",
+													"  });",
+													"    ",
+													"  pm.test(\"Email invalido\", () => {",
+													"    pm.expect(response.email).to.eql(\"email deve ser um email válido\");",
+													"  });",
+													"",
+													"  pm.test(\"Administrador invalido\", () => {",
+													"    pm.expect(response.administrador).to.eql(\"administrador deve ser 'true' ou 'false'\");",
+													"  });"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{currentBearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"nome\": \"{{currentName}}\",\n  \"email\": \"invalid\",\n  \"password\": \"{{currentPassword}}\",\n  \"administrador\": \"invalid\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/usuarios/:_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"usuarios",
+												":_id"
+											],
+											"variable": [
+												{
+													"key": "_id",
+													"value": "{{currentUserId}}",
+													"description": "(Required) ID do usuário"
+												}
+											]
+										},
+										"description": "Não é permitido cadastrar usuário com email já utilizado.\nCaso não seja encontrado usuário com o ID informado é realizado novo cadastro ao invés de alteração.\n"
+									},
+									"response": []
+								},
+								{
+									"name": "Parametros obrigatorios",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const response = pm.response.json();",
+													"",
+													"pm.test(\"Status code é 400\", () => {",
+													"    pm.expect(pm.response.code).to.eql(400);",
+													"  });",
+													"",
+													"  pm.test(\"Nome obrigatório\", () => {",
+													"    pm.expect(response.nome).to.eql(\"nome é obrigatório\");",
+													"  });",
+													"",
+													"  pm.test(\"Password obrigatório\", () => {",
+													"    pm.expect(response.password).to.eql(\"password é obrigatório\");",
+													"  });",
+													"",
+													"  pm.test(\"Email obrigatório\", () => {",
+													"    pm.expect(response.email).to.eql(\"email é obrigatório\");",
+													"  });",
+													"",
+													"  pm.test(\"Administrador obrigatório\", () => {",
+													"    pm.expect(response.administrador).to.eql(\"administrador é obrigatório\");",
+													"  });"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{currentBearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/usuarios/:_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"usuarios",
+												":_id"
+											],
+											"variable": [
+												{
+													"key": "_id",
+													"value": "{{currentUserId}}",
+													"description": "(Required) ID do usuário"
+												}
+											]
+										},
+										"description": "Não é permitido cadastrar usuário com email já utilizado.\nCaso não seja encontrado usuário com o ID informado é realizado novo cadastro ao invés de alteração.\n"
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Excluir por id",
+							"item": [
+								{
+									"name": "Usuario não encontrado",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const response = pm.response.json();",
+													"",
+													"pm.test(\"Status code é 200\", () => {",
+													"    pm.expect(pm.response.code).to.eql(200);",
+													"  });",
+													"",
+													"  pm.test(\"Mensagem é correta\", () => {",
+													"    pm.expect(response.message).to.eql(\"Nenhum registro excluído\");",
+													"  });"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{currentBearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/usuarios/:_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"usuarios",
+												":_id"
+											],
+											"variable": [
+												{
+													"key": "_id",
+													"value": "invalid",
+													"description": "(Required) ID do usuário"
+												}
+											]
+										},
+										"description": "Não é permitido excluir usuário com carrinho."
+									},
+									"response": []
+								},
+								{
+									"name": "Excluir usuario com sucesso",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const response = pm.response.json();",
+													"",
+													"pm.test(\"Status code é 200\", () => {",
+													"    pm.expect(pm.response.code).to.eql(200);",
+													"  });",
+													"",
+													"  pm.test(\"Mensagem é correta\", () => {",
+													"    pm.expect(response.message).to.eql(\"Registro excluído com sucesso\");",
+													"  });"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{currentBearerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/usuarios/:_id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"usuarios",
+												":_id"
+											],
+											"variable": [
+												{
+													"key": "_id",
+													"value": "{{currentUserId}}",
+													"description": "(Required) ID do usuário"
+												}
+											]
+										},
+										"description": "Não é permitido excluir usuário com carrinho."
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://serverest.dev"
+		},
+		{
+			"key": "currentEmail",
+			"value": "teste001@teste.com",
+			"type": "string"
+		},
+		{
+			"key": "currentPassword",
+			"value": "teste",
+			"type": "string"
+		},
+		{
+			"key": "currentUserId",
+			"value": "AUiad95BdjU5V7T7",
+			"type": "string"
+		},
+		{
+			"key": "currentName",
+			"value": "teste001",
+			"type": "string"
+		},
+		{
+			"key": "currentAdministrador",
+			"value": "true",
+			"type": "string"
+		},
+		{
+			"key": "currentBearerToken",
+			"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlMDAxQHRlc3RlLmNvbSIsInBhc3N3b3JkIjoidGVzdGUiLCJpYXQiOjE3MzY2NTIxOTcsImV4cCI6MTczNjY1Mjc5N30.36Qi75Q2vznIlTK1LDq7OHggTNGv5dhBiSPyPlkf5p8",
+			"type": "string"
+		}
+	]
+}

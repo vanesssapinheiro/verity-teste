@@ -1,0 +1,17 @@
+{
+  "name": "teste",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "newman": "newman run serverest.postman_collection.json",
+    "newman:reports": "newman run serverest.postman_collection.json --reporters json,html  --reporter-json-export reports/report.json --reporter-html-export reports/report.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "newman": "4.6.1",
+    "newman-reporter-html": "1.0.5"
+  }
+}
