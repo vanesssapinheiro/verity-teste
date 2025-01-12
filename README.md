@@ -19,14 +19,29 @@ Este repositório contém um projeto para realização de testes de API utilizan
 - **Postman**: Para criar e executar os testes de API.
 - **Newman**: Para execução dos testes em linha de comando.
 - **GitHub Actions**: Para automação da execução dos testes e geração de releases.
+- **Docker (*opcional*)**: Para executar os testes em um container Docker.
+
 
 ### Executar os Testes Localmente
 
 Para gerar os relatórios localmente, execute o seguinte comando:
 
 ```bash
+npm run newman
+# resultado vai ser gerado no console
 npm run newman:reports
+# devem ser gerados os arquivos ./reports/report.json e ./reports/report.html
 ```
+
+Para executar os testes com Docker, execute o seguinte comando:
+
+```bash
+npm run newman:docker
+# resultado vai ser gerado no console
+npm run newman:docker:report
+# devem ser gerados os arquivos ./reports/report.json e ./reports/report.html
+```
+
 
 Devem ser gerados dois arquivos na pasta `reports/`:
 

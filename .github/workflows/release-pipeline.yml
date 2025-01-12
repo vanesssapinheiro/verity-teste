@@ -25,7 +25,7 @@ jobs:
         run: npm install
 
       - name: Gerar relatórios
-        run: npm run newman:reports
+        run: npm run newman:docker:multiple:report
 
       - name: Upload relatórios como artifact
         uses: actions/upload-artifact@v3

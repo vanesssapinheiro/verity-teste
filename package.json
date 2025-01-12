@@ -5,7 +5,18 @@
   "main": "index.js",
   "scripts": {
     "newman": "newman run serverest.postman_collection.json",
-    "newman:reports": "newman run serverest.postman_collection.json --reporters json,html  --reporter-json-export reports/report.json --reporter-html-export reports/report.html"
+    "newman:reports": "newman run serverest.postman_collection.json --reporters json,html  --reporter-json-export reports/report.json --reporter-html-export reports/report.html",
+    "newman:docker": "npm run stop:serverest; npm run start:serverest && npm run wait:serverest && npm run test:serverest; npm run stop:serverest",
+    "newman:docker:report": "npm run stop:serverest; npm run start:serverest && npm run wait:serverest && npm run test:serverest:report; docker cp serverest:/reports .;  npm run stop:serverest",
+    "newman:docker:multiple": "npm run stop:serverest; npm run start:serverest && npm run wait:serverest && npm run test:serverest -- -n 120; npm run stop:serverest",
+    "newman:docker:multiple:report": "npm run stop:serverest; npm run start:serverest && npm run wait:serverest && npm run test:serverest:report -- -n 120; docker cp serverest:/reports .;  npm run stop:serverest",
+
+    "start:serverest": "docker run --rm --name serverest -d -p 3033:3000 paulogoncalvesbh/serverest:latest",
+    "wait:serverest": "npx wait-on http://localhost:3033",
+    "test:serverest": "newman run serverest.postman_collection.json -e docker.env.json",
+    "test:serverest:report": "newman run serverest.postman_collection.json -e docker.env.json --reporters json,html  --reporter-json-export reports/report.json --reporter-html-export reports/report.html",
+    "stop:serverest": "docker rm -f serverest"
+
   },
   "keywords": [],
   "author": "",
