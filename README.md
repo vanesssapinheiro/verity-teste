@@ -21,6 +21,15 @@ Este repositório contém um projeto para realização de testes de API utilizan
 - **GitHub Actions**: Para automação da execução dos testes e geração de releases.
 - **Docker (*opcional*)**: Para executar os testes em um container Docker.
 
+## Configuração do ambiente
+```sh
+# instalando dependencias do Node
+npm install 
+
+# baixar imagem do serverest 
+docker pull paulogoncalvesbh/serverest:latest
+```
+
 
 ### Executar os Testes Localmente
 
@@ -33,13 +42,21 @@ npm run newman:reports
 # devem ser gerados os arquivos ./reports/report.json e ./reports/report.html
 ```
 
-Para executar os testes com Docker, execute o seguinte comando:
+Para executar os testes com Docker multiplas interações, execute o seguinte comando:
 
 ```bash
 npm run newman:docker
 # resultado vai ser gerado no console
 npm run newman:docker:report
 # devem ser gerados os arquivos ./reports/report.json e ./reports/report.html
+```
+Para executar os testes com Docker, execute o seguinte comando:
+
+```bash
+npm run newman:docker:multiple
+# resultado vai ser executado no docker e gerado no console com 120 interações
+npm run newman:docker:multiple:report
+# resultado vai ser executado no docker e gerado no console com 120 interações e gerado arquivos ./reports/report.json e ./reports/report.html
 ```
 
 
