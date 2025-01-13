@@ -71,7 +71,6 @@ Devem ser gerados dois arquivos na pasta `reports/`:
 
 1. Toda alteração na branch `main` do repositório.
 2. O workflow será acionado automaticamente, executando os testes e gerando os relatórios.
-3. A release será criada com os relatórios anexados, a versão da release será utilizada do `package.json`.
 
 ## Resultados Esperados
 
