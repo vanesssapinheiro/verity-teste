@@ -1,0 +1,130 @@
+Feature: API Test Scenarios
+
+  # Cenário: Validar login do usuário com credenciais válidas
+  Scenario: Validar login do usuário com sucesso
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição POST para "/login" com os dados:
+      | email            | password  |
+      | usuario@exemplo.com | senha123  |
+    Then o status code deve ser 200
+    And a resposta deve conter:
+      | message                | authorization             |
+      | Login realizado com sucesso | Bearer <token>         |
+
+  # Cenário: Validar login com credenciais inválidas
+  Scenario: Validar login com e-mail ou senha incorreta
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição POST para "/login" com os dados:
+      | email                  | password   |
+      | email_invalido@exemplo.com | senha_errada |
+    Then o status code deve ser 401
+    And a resposta deve conter a mensagem "Email e/ou senha inválidos"
+
+  # Cenário: Validar campos obrigatórios ausentes no login
+  Scenario: Validar campos obrigatórios ausentes no login
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição POST para "/login" com os seguintes dados ausentes:
+      | email | password |
+    Then o status code deve ser 400
+    And a resposta deve conter:
+      | email           | password              |
+      | email é obrigatório | password é obrigatório |
+
+  # Cenário: Listar usuários cadastrados sem filtros
+  Scenario: Listar usuários cadastrados sem filtros
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição GET para "/users" sem filtros
+    Then o status code deve ser 200
+    And a resposta deve conter:
+      | quantidade | usuarios            |
+      | 1          | [{"nome": "João Silva", "email": "joao@exemplo.com", "password": "senha123", "administrador": "true", "_id": "<generated_id>"}] |
+
+  # Cenário: Validar consulta com filtros inválidos
+  Scenario: Consultar usuários com filtros inválidos
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição GET para "/users" com filtros inválidos:
+      | filtro       | valor          |
+      | email        | invalido       |
+      | administrador | valor_invalido |
+    Then o status code deve ser 400
+    And a resposta deve conter:
+      | email                       | administrador                       |
+      | email deve ser um email válido | administrador deve ser 'true' ou 'false' |
+
+  # Cenário: Validar cadastro de usuário
+  Scenario: Cadastro de usuário com sucesso
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição POST para "/users" com os dados:
+      | nome       | email              | password | administrador |
+      | João Silva | joao@exemplo.com   | senha123 | true          |
+    Then o status code deve ser 201
+    And a resposta deve conter a mensagem "Cadastro realizado com sucesso"
+    And a resposta deve conter o campo "_id"
+
+  # Cenário: Cadastro de usuário com e-mail já utilizado
+  Scenario: Cadastro com e-mail já existente
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição POST para "/users" com os dados:
+      | nome       | email            | password | administrador |
+      | João Silva | joao@exemplo.com | senha123 | true          |
+    Then o status code deve ser 400
+    And a resposta deve conter a mensagem "Este email já está sendo usado"
+
+  # Cenário: Excluir por ID inválido
+  Scenario: Excluir usuário com ID inválido
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição DELETE para "/users" sem parâmetros
+    Then o status code deve ser 200
+    And a resposta deve conter a mensagem "Nenhum registro excluído"
+
+  # Cenário: Excluir por ID válido
+  Scenario: Excluir usuário com ID válido
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição DELETE para "/users/<valid_id>"
+    Then o status code deve ser 200
+    And a resposta deve conter a mensagem "Registro excluído com sucesso"
+
+  # Cenário: Buscar usuário por ID válido
+  Scenario: Buscar usuário por ID válido
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição GET para "/users/<valid_id>"
+    Then o status code deve ser 200
+    And a resposta deve conter:
+      | nome       | email              | password | administrador | _id        |
+      | teste001   | teste001@teste.com | teste    | true          | hZhIFvf5cpySGGT0 |
+
+  # Cenário: Buscar usuário por ID inválido
+  Scenario: Buscar usuário por ID inválido
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição GET para "/users/<invalid_id>"
+    Then o status code deve ser 200
+    And a resposta deve conter a mensagem "Usuário não encontrado"
+
+  # Cenário: Editar usuário por ID válido
+  Scenario: Editar usuário por ID válido
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição PUT para "/users/<valid_id>" com os dados:
+      | nome       | email              | password | administrador |
+      | Novo Nome  | novoemail@teste.com | novaSenha | false         |
+    Then o status code deve ser 200
+    And a resposta deve conter a mensagem "Registro alterado com sucesso"
+
+  # Cenário: Editar usuário com parâmetros inválidos
+  Scenario: Editar usuário com parâmetros inválidos
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição PUT para "/users/<valid_id>" com os dados inválidos:
+      | email        | administrador |
+      | invalido     | valor_invalido |
+    Then o status code deve ser 200
+    And a resposta deve conter:
+      | email                       | administrador                       |
+      | email deve ser um email válido | administrador deve ser 'true' ou 'false' |
+
+  # Cenário: Editar usuário sem parâmetros obrigatórios
+  Scenario: Editar usuário sem parâmetros obrigatórios
+    Given que a API esteja funcionando corretamente
+    When eu envio uma requisição PUT para "/users/<valid_id>" sem parâmetros
+    Then o status code deve ser 400
+    And a resposta deve conter:
+      | nome           | email              | password              | administrador             |
+      | nome é obrigatório | email é obrigatório | password é obrigatório | administrador é obrigatório |
