@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "4609f3d2-17e3-4e76-a875-8dce93170120",
 		"name": "serverest",
-		"description": "## Teste para Vaga de QA - Projeto por Vanessa Pinheiro\n\nEste postman contém o resultado da realização de **testes de API** utilizando **Postman**, **Newman** e **GitHub Actions**.",
+		"description": "## Teste para Vaga de QA - Projeto por Vanessa Pinheiro\n\nEste postman contém o resultado da realização de testes de API utilizando Postman, Newman e GitHub Actions.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "14182391",
 		"_collection_link": "https://cloudy-shadow-228237.postman.co/workspace/VANESSA-TESTE~6839a81d-3df4-4073-aab4-834daa2f2b68/collection/14182391-4609f3d2-17e3-4e76-a875-8dce93170120?action=share&source=collection_link&creator=14182391"
@@ -15,7 +15,7 @@
 					"name": "cadastrar usuario",
 					"item": [
 						{
-							"name": "Cadastrar usuário",
+							"name": "Newman . Cadastrar usuário",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -91,7 +91,7 @@
 							"response": []
 						},
 						{
-							"name": "Tentar criar usuario padrao",
+							"name": "Newman . Tentar criar usuario padrao",
 							"event": [
 								{
 									"listen": "prerequest",
