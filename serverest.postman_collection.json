@@ -1,10 +1,11 @@
 {
 	"info": {
-		"_postman_id": "93dd8af9-2967-44c5-a917-da01a3d0abea",
+		"_postman_id": "4609f3d2-17e3-4e76-a875-8dce93170120",
 		"name": "serverest",
-		"description": "**O ServeRest é uma API REST gratuita que simula uma loja virtual com intuito de servir de material de estudos de testes de API.**\n\n**Não deixe de seguir o [autor do projeto](https://github.com/PauloGoncalvesBH) e deixar um star no repositório: [github.com/ServeRest/ServeRest](https://github.com/ServeRest/ServeRest)**\n\nEssa página documenta todas as rotas e como acessá-las. Para mais detalhes do ServeRest (como executar localmente utilizando Docker ou NPM, alterar timeout de autenticação, etc) acesse [o repositório do ServeRest](https://github.com/serverest/serverest).\n\nEstá utilizando Postman? Importe o [JSON do Swagger](https://raw.githubusercontent.com/ServeRest/ServeRest/trunk/docs/swagger.json) para ter acesso às collections.\n\nVai fazer teste de carga? Leia a seção '[Teste de Carga](https://github.com/ServeRest/ServeRest#teste-de-carga)'.\n\n\nMuito obrigado ♥ a todos que apoiam o projeto [financeiramente](https://opencollective.com/serverest#section-contributors) ou [com código, ideias e divulgação](https://github.com/ServeRest/ServeRest#contribuidores-), graças a vocês **mais de R$ 2000,00 foram doados para a ONG [Todas as letras](https://todasasletras.org/)** até o momento.\n\nO ServeRest possui um front, com status em beta, não deixe de conhecer: [front.serverest.dev](https://front.serverest.dev).\n\nPrecisa de apoio? [Abra uma issue](https://github.com/ServeRest/ServeRest/issues) ou contate o mantenedor do projeto:\n\n\nContact Support:\n Name: Paulo Gonçalves",
+		"description": "## Teste para Vaga de QA - Projeto por Vanessa Pinheiro\n\nEste postman contém o resultado da realização de **testes de API** utilizando **Postman**, **Newman** e **GitHub Actions**.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "28883546"
+		"_exporter_id": "14182391",
+		"_collection_link": "https://cloudy-shadow-228237.postman.co/workspace/VANESSA-TESTE~6839a81d-3df4-4073-aab4-834daa2f2b68/collection/14182391-4609f3d2-17e3-4e76-a875-8dce93170120?action=share&source=collection_link&creator=14182391"
 	},
 	"item": [
 		{
@@ -88,11 +89,87 @@
 								"description": "Não é permitido cadastrar usuário com email já utilizado"
 							},
 							"response": []
+						},
+						{
+							"name": "Tentar criar usuario padrao",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"currentName\", `user_${Date.now()}`);",
+											"pm.environment.set(\"currentEmail\", `user_${Date.now()}@example.com`);",
+											"pm.environment.set(\"currentPassword\", `teste`);",
+											"pm.environment.set(\"currentAdministrador\", Math.random() > 0.5 ? \"true\" : \"false\");"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Status code é 201\", () => {",
+											"    pm.expect(pm.response.code).to.eql(201);",
+											"  });",
+											"",
+											"  pm.test(\"Mensagem é correta\", () => {",
+											"    pm.expect(response.message).to.eql(\"Cadastro realizado com sucesso\");",
+											"  });",
+											"",
+											"  pm.test(\"_id presente\", () => {",
+											"    pm.expect(response).to.have.property(\"_id\");",
+											"  });",
+											"",
+											"pm.environment.set(\"currentUserId\", response._id);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nome\": \"{{currentName}}\",\n  \"email\": \"{{currentEmail}}\",\n  \"password\": \"{{currentPassword}}\",\n  \"administrador\": \"{{currentAdministrador}}\"\n}\n",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/usuarios",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"usuarios"
+									]
+								},
+								"description": "Não é permitido cadastrar usuário com email já utilizado"
+							},
+							"response": []
 						}
 					]
 				},
 				{
-					"name": "Login realizado com sucesso",
+					"name": "1. Validar login do usuário.",
 					"event": [
 						{
 							"listen": "test",
@@ -156,7 +233,7 @@
 					"response": []
 				},
 				{
-					"name": "Email e/ou senha invalido",
+					"name": "2. Validar E-mail Inválido ou Senha Incorreta:",
 					"event": [
 						{
 							"listen": "test",
@@ -213,7 +290,7 @@
 					"response": []
 				},
 				{
-					"name": "Faltando email",
+					"name": "3.1 Validação de Campos faltando o campo e-mail",
 					"event": [
 						{
 							"listen": "test",
@@ -253,7 +330,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"password\": \"{{defaultPassword01}}\"\n}",
+							"raw": "{\n\n}",
 							"options": {
 								"raw": {
 									"headerFamily": "json",
@@ -275,7 +352,68 @@
 					"response": []
 				},
 				{
-					"name": "Faltando passwod",
+					"name": "3.2 Validação de Campos faltando o  passwod",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"  pm.test(\"Status code é 400\", () => {",
+									"    pm.expect(pm.response.code).to.eql(400);",
+									"  });",
+									"  pm.test(\"Status code é 400 para falta de password\", () => {",
+									"      pm.expect(pm.response.code).to.eql(400);",
+									"    });",
+									"",
+									"    pm.test(\"Menssagem de erro por falta de password correta\", () => {",
+									"      pm.expect(response.password).to.eql(\"password é obrigatório\");",
+									"    });",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{$randomEmail}}\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "A duração do token retornado em authorization é de 600 segundos (10 minutos). Caso esteja expirado irá receber status code 401 (Unauthorized).\n"
+					},
+					"response": []
+				},
+				{
+					"name": "3.3 Validação de Campos, ambos os campos ausentes",
 					"event": [
 						{
 							"listen": "test",
@@ -344,7 +482,7 @@
 					"name": "listar usuarios",
 					"item": [
 						{
-							"name": "Listar usuários cadastrados sem filtro",
+							"name": "1. Listar usuários cadastrados, sem filtro",
 							"event": [
 								{
 									"listen": "test",
@@ -441,7 +579,7 @@
 							"response": []
 						},
 						{
-							"name": "Listar usuários cadastrados com filtro",
+							"name": "2. Listar usuários cadastrados, com filtro",
 							"event": [
 								{
 									"listen": "test",
@@ -551,7 +689,7 @@
 							"response": []
 						},
 						{
-							"name": "Filtros invalidos",
+							"name": "3. Consultar usuários passando filtros inválidos",
 							"event": [
 								{
 									"listen": "test",
@@ -630,7 +768,7 @@
 							"response": []
 						},
 						{
-							"name": "Usuarios não encontrados",
+							"name": "4. Verificar usuarios não encontrados",
 							"event": [
 								{
 									"listen": "test",
@@ -716,7 +854,7 @@
 					"name": "cadastro",
 					"item": [
 						{
-							"name": "Cadastrar usuário com sucesso",
+							"name": "1. Validar cadastro  de usuário",
 							"event": [
 								{
 									"listen": "test",
@@ -779,7 +917,7 @@
 							"response": []
 						},
 						{
-							"name": "Email já existe",
+							"name": "2. Validar cadastrar com  e-mail ja utilizado",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -849,7 +987,7 @@
 							"response": []
 						},
 						{
-							"name": "Faltando propriedades obrigatorias",
+							"name": "3. Testes de Validação de Campos",
 							"event": [
 								{
 									"listen": "test",
@@ -918,7 +1056,7 @@
 							"response": []
 						},
 						{
-							"name": "Propridade email invalido",
+							"name": "4. Propridade email invalido",
 							"event": [
 								{
 									"listen": "test",
@@ -975,7 +1113,7 @@
 							"response": []
 						},
 						{
-							"name": "Propridade administrador invalida",
+							"name": "5. Propriedade administrador invalida",
 							"event": [
 								{
 									"listen": "test",
@@ -1040,7 +1178,7 @@
 							"name": "buscar por id",
 							"item": [
 								{
-									"name": "Buscar usuário por ID",
+									"name": "1. Buscar usuário por ID",
 									"event": [
 										{
 											"listen": "test",
@@ -1112,7 +1250,7 @@
 									"response": []
 								},
 								{
-									"name": "Usuario não encontrado",
+									"name": "2. Usuario não encontrado",
 									"event": [
 										{
 											"listen": "test",
@@ -1176,7 +1314,7 @@
 							"name": "Editar por id",
 							"item": [
 								{
-									"name": "Editar usuário com sucesso",
+									"name": "3. Editar usuário com sucesso",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -1264,7 +1402,7 @@
 									"response": []
 								},
 								{
-									"name": "Parametros invalidos",
+									"name": "4. Parametros invalidos",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -1353,7 +1491,7 @@
 									"response": []
 								},
 								{
-									"name": "Parametros obrigatorios",
+									"name": "5. Parametros obrigatorios",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -1455,7 +1593,7 @@
 							"name": "Excluir por id",
 							"item": [
 								{
-									"name": "Usuario não encontrado",
+									"name": "6. Usuario não encontrado",
 									"event": [
 										{
 											"listen": "test",
@@ -1516,7 +1654,7 @@
 									"response": []
 								},
 								{
-									"name": "Excluir usuario com sucesso",
+									"name": "7. Excluir usuario com sucesso",
 									"event": [
 										{
 											"listen": "test",
@@ -1622,7 +1760,7 @@
 		},
 		{
 			"key": "currentUserId",
-			"value": "AUiad95BdjU5V7T7",
+			"value": "hdmWpnhay7Cv1mcm",
 			"type": "string"
 		},
 		{
