@@ -18,7 +18,9 @@ Este repositório contém um projeto para realização de testes de API utilizan
 
 - **Postman**: Para criar e executar os testes de API.
 - **Newman**: Para execução dos testes em linha de comando.
-- **GitHub Actions**: Para automação da execução dos testes e geração de releases.
+- **GitHub Actions**: Para automação da execução dos testes e geração de releases
+- **Cucumber**: Para descrever os testes em BDD.
+- **Confluence**: Para gerar a documentação.
 - **Docker (*opcional*)**: Para executar os testes em um container Docker.
 
 ## Configuração do ambiente
@@ -86,7 +88,12 @@ ServeRest é uma API REST gratuita que simula uma loja virtual, projetada para f
 URL Base: `https://serverest.dev`
 
 # Testes implementados
-Estão descritos na documentação em localizados ./docs
+Estão descritos na documentação armazenados em ./docs/Documentacao_Desafio.pdf
+
+# Resultado dos Testes
+Estão descritos na documentação armazenados em ./docs/Resultado_ Desafio .pdf
 
 # Testes BDD
-Estão descritos na documentação em localizados ./cenarios
+Estão descritos na documentação armazenados em ./cenarios/bdd.testcase
+
+
